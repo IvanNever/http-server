@@ -30,6 +30,43 @@ server.on("request", async (request, response) => {
 
     fileStream.pipe(response);
   }
+
+  if (request.url === "/login" && request.method === "POST") {
+    response.setHeader("Content-Type", "application/json");
+
+    response.statusCode = 200;
+
+    const body = {
+      message: "Logging you in...",
+    };
+
+    response.end(JSON.stringify(body));
+  }
+
+  if (request.url === "/user" && request.method === "PUT") {
+    response.setHeader("Content-Type", "application/json");
+
+    response.statusCode = 200;
+
+    const body = {
+      message: "Updating you info...",
+    };
+
+    response.end(JSON.stringify(body));
+  }
+
+  if (request.url === "/upload" && request.method === "PUT") {
+    const fileHandle = await fs.open("./storage/image.jpeg", "w");
+    const fileStream = fileHandle.createWriteStream();
+
+    request.pipe(fileStream);
+
+    request.on("end", () => {
+      response.end(
+        JSON.stringify({ message: "File was uploaded successfully!" }),
+      );
+    });
+  }
 });
 
 server.listen(9000, () => {
